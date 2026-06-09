@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sanctuary Inventory · First Baptist Church Huntersville</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { navy: "#1A3040", teal: "#0088b8", tealdark: "#006d94" },
+        fontFamily: { sans: ["Montserrat", "system-ui", "sans-serif"] },
+      } },
+    };
+  </script>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="config.js"></script>
+</head>
+<body class="font-sans bg-slate-50 text-navy min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-navy text-white sticky top-0 z-30 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-9 h-9 rounded-lg bg-teal grid place-items-center font-extrabold shrink-0">SI</div>
+        <div class="min-w-0">
+          <h1 class="text-base sm:text-lg font-bold leading-tight truncate">Sanctuary Inventory</h1>
+          <p class="text-[11px] sm:text-xs text-slate-300 leading-tight truncate">First Baptist Church Huntersville</p>
+        </div>
+      </div>
+      <div id="user-box" class="hidden items-center gap-3 text-sm">
+        <span id="user-email" class="text-slate-200 hidden sm:inline"></span>
+        <button id="signout-btn" class="px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 transition text-xs font-medium">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sign-in gate -->
+  <section id="gate" class="max-w-md mx-auto px-4 py-20 text-center">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+      <div class="w-14 h-14 mx-auto rounded-xl bg-navy grid place-items-center text-white text-xl font-extrabold mb-5">SI</div>
+      <h2 class="text-xl font-bold mb-2">Staff Sign-In</h2>
+      <p class="text-sm text-slate-500 mb-6">This inventory is restricted to approved church staff. Sign in with your Google account to continue.</p>
+      <div id="gsi-button" class="flex justify-center"></div>
+      <p id="gate-msg" class="text-sm text-red-600 mt-5 min-h-[1.25rem]"></p>
+      <p id="config-warning" class="hidden text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mt-5 text-left"></p>
+    </div>
+  </section>
+
+  <!-- App -->
+  <main id="app" class="hidden max-w-7xl mx-auto px-4 py-6">
+
+    <!-- Summary -->
+    <div id="summary" class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-5"></div>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap items-center gap-3 mb-5">
+      <select id="filter-location" class="text-sm border border-slate-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-teal focus:border-teal outline-none">
+        <option value="">All locations</option>
+      </select>
+      <select id="filter-status" class="text-sm border border-slate-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-teal focus:border-teal outline-none">
+        <option value="">All items</option>
+        <option value="undecided">Needs decision</option>
+        <option value="decided">Decided</option>
+        <option value="Keep">Marked: Keep</option>
+        <option value="Donate">Marked: Donate</option>
+        <option value="Throw Away">Marked: Throw Away</option>
+      </select>
+      <input id="filter-search" type="search" placeholder="Search items…" class="text-sm border border-slate-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-teal focus:border-teal outline-none flex-1 min-w-[160px]" />
+      <button id="refresh-btn" class="text-sm px-3 py-2 rounded-lg bg-navy text-white hover:bg-navy/90 transition font-medium">Refresh</button>
+    </div>
+
+    <!-- States -->
+    <div id="loading" class="hidden py-20 text-center text-slate-400 text-sm">Loading inventory…</div>
+    <div id="empty" class="hidden py-20 text-center">
+      <p class="text-slate-500 font-medium mb-1">No items yet</p>
+      <p class="text-sm text-slate-400">Add photos to the Drive folder, then run the cataloging skill to populate inventory.</p>
+    </div>
+    <div id="error" class="hidden py-12 text-center text-red-600 text-sm"></div>
+
+    <!-- Grid -->
+    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+  </main>
+
+  <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 hidden px-4 py-2.5 rounded-lg bg-navy text-white text-sm shadow-lg"></div>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="app.js"></script>
+</body>
+</html>

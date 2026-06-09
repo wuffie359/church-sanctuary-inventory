@@ -1,0 +1,27 @@
+/* Minimal custom CSS — Tailwind handles the rest. */
+
+.disposition-btn {
+  flex: 1;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.4rem 0.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #475569;
+  transition: all 0.12s ease;
+  cursor: pointer;
+}
+.disposition-btn:hover { border-color: #cbd5e1; background: #f8fafc; }
+
+.disposition-btn.active-keep   { background: #dcfce7; border-color: #16a34a; color: #15803d; }
+.disposition-btn.active-donate { background: #dbeafe; border-color: #2563eb; color: #1d4ed8; }
+.disposition-btn.active-toss   { background: #fee2e2; border-color: #dc2626; color: #b91c1c; }
+
+/* Photo aspect box with graceful fallback */
+.photo-box { aspect-ratio: 4 / 3; background: #f1f5f9; position: relative; overflow: hidden; }
+.photo-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-box .fallback {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  color: #94a3b8; font-size: 0.75rem; text-align: center; padding: 1rem;
+}

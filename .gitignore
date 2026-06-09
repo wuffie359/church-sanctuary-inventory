@@ -1,0 +1,18 @@
+# Local working files — never pushed to the public repo
+.tmp-photos/
+*.jpg
+*.jpeg
+*.png
+*.heic
+*.webp
+
+# Credentials / tokens (should never be here, but belt-and-suspenders)
+*token*.json
+*credentials*.json
+.env
+.env.*
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*~
