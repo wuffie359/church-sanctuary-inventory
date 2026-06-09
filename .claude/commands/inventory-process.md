@@ -42,7 +42,9 @@ Sheet (matched by Drive File ID) are skipped.
      - **Condition** — New / Good / Fair / Worn / Damaged.
      - **Est. Value (USD)** — rough resale/replacement ballpark; blank if unsure.
      - **Qty** — count if a lot, else 1.
-     - **Sub-Area** — if visible (e.g. "top shelf", "behind door").
+     - **Sub-Area** — where it sits (e.g. "top shelf", "behind door"). When ONE photo
+       contains several items, ALSO note the in-frame position here so the cards are
+       distinguishable (e.g. "top shelf · left", "on the blue chair", "front-right").
      - **AI Suggested** — exactly one of: `Keep`, `Donate`, `Throw Away`.
      - **AI Reasoning** — one short sentence on WHY (condition, usefulness, value,
        duplication). Be honest: damaged/obsolete → Throw Away; good but surplus →

@@ -6,14 +6,25 @@
    write-back), then flush. Done = Chad has seen it work end-to-end.
 
 ## Next (queue)
-2. **Real sanctuary inventory, room by room** — photograph by location (sub-folders),
+2. **Location-first "pick a room" review flow** — replace the all-items grid as the
+   default with a room picker: reviewer lands on a list of locations (with per-room
+   progress), taps one, and reviews ONLY that room's items on its own page. Makes it
+   easy to say "I'm working the Choir Room today" instead of scrolling everything.
+   Keep the all-items/search view available as a secondary option. (Chad's idea, 2026-06-08.)
+3. **Real sanctuary inventory, room by room** — photograph by location (sub-folders),
    process in batches, staff triage. Add staff to allowlist + share photo folder.
 3. **Decision export / report** — a "what we're donating / tossing" summary view or
    printout for the cleanup day.
 
 ## Later (parking lot)
 - In-app photo upload (skip the Drive step).
-- Per-item multi-photo support (angles, labels).
+- **(C) Auto-cropped per-item thumbnails** — crop each item out of a shared photo so every
+  card shows just its item (vs. today's shared photo + locator hint). Needs an image-crop
+  step in the pipeline + crop storage.
+- **Duplicate-asset handling** — flag suspected same-asset-across-photos as "possible
+  duplicate" in Needs-attention; add a staff "merge" action. No auto-merge (vision can't
+  reliably tell a re-shoot from an identical second item).
+- Per-item multi-photo support (attach multiple angles/labels to one asset).
 - "Assigned to" column so tasks can be split across volunteers.
 - Value rollups for a donation receipt.
 

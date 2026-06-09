@@ -3,15 +3,13 @@
 > Implementation ref: implementation.md → Phases 1–2
 
 ## In Progress
-- [ ] Chad: 3 manual Google steps (OAuth Client ID, Apps Script deploy, DNS CNAME) — see CLAUDE.md → Manual Setup
+- [ ] Chad: add staff + 2nd reviewer to the `Reviewers` tab (tomorrow, once emails known)
 
 ## Up Next
-- [ ] Chad: upload a few home test photos to the Drive folder
-- [ ] Run `/inventory-process` on the test photos — verify Sheet rows are accurate
-- [ ] Open springclean.mishtoba.com → sign in → confirm items + photos render
-- [ ] Tap Keep/Donate/Throw Away → refresh → confirm decisions persisted
-- [ ] Confirm a non-allowlisted Google account is blocked
-- [ ] Run `/inventory-flush` to reset after the test
+- [ ] Confirm a vote persists across refresh on the live site
+- [ ] (Optional) Confirm a non-allowlisted Google account is blocked
+- [ ] Run `/inventory-flush` to clear the 13 home-test items before real church inventory
+- [ ] When real reviewers added: share the Drive photo folder with them (so photos render)
 
 ## Done (this cycle)
 - [x] Project scaffold + git init — 2026-06-08
@@ -23,6 +21,17 @@
 - [x] Created public GitHub repo + pushed + enabled Pages — 2026-06-08
 
 ## Session Log
+### 2026-06-08 (evening — full loop working ✅)
+- LIVE at https://springclean.mishtoba.com (DNS + HTTPS enforced). OAuth origin fixed
+  by Chad (mistoba.org→mishtoba.com); Code.gs v2 (voting) re-deployed.
+- END-TO-END TEST PASSED: Chad uploaded a home living-room photo → cataloged 13 distinct
+  items (multi-item split + in-frame position hints) → photos render in the app. Chad:
+  "seem to work well."
+- Images confirmed NOT in GitHub — served from private Drive via thumbnail URLs; Sheet
+  stores only file ID + URL text.
+- Pick up at: vote-persistence check; add real reviewers + share photo folder; flush
+  the 13 test items before real church inventory.
+
 ### 2026-06-08
 - Built the entire app end-to-end. ✅ Step 1 OAuth + ✅ Step 2 Apps Script deployed &
   verified. ⏳ Step 3 DNS CNAME added at GoDaddy — propagating (background poll running).
