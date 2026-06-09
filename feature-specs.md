@@ -43,30 +43,45 @@ the vote buttons — the zoom handler should be scoped to the photo element only
 
 ---
 
-## 2. Room-first review flow
+## 2. Room-first overview + review flow
 **Front-end only — no redeploy. Effort: Medium.** (Already listed in `next_steps.md`
 under "Next".)
 
 **Why:** People work the building room by room ("I'm doing the Choir Room today").
-The default all-items grid forces scrolling past everything. A room picker matches
-the real workflow.
+The default all-items grid forces scrolling past everything. A room picker that opens
+with a clear overview — what's in each room and across the whole inventory — matches
+the real workflow and orients reviewers before they start.
 
 **Where:**
 - Review view markup in `index.html` (`#review-view`, `#summary`, filter bar, `#grid`).
 - Filtering logic in `applyFilters()` — `app.js:139-160`.
 - Per-location counts/progress: reuse the logic that powers the dashboard's
   by-location block, `locationBlock()` — `app.js:315-345` (decided/total per location).
+- All aggregation reads from the in-memory `allItems` using existing fields:
+  **Location** (col C), **Category** (col F), **Est. Value** (col I), **Qty** (col J).
+  No schema change.
 
 **Approach:**
-- Add a **room-picker landing sub-view**: a list of locations, each showing per-room
-  progress (e.g. `12 / 20 decided`) and a small progress bar, reusing the
-  decided/total math from `locationBlock()`.
-- Tapping a room sets the location filter and switches to the existing grid, scoped
-  to that room.
+- Add a **room-picker landing sub-view** with two parts:
+  1. **Inventory summary strip** (top): total item count, total estimated value, and
+     a "types of stuff" breakdown — counts grouped by **Category** across all rooms
+     (e.g. `Seating 42 · Electronics 11 · Tables 9 · Décor 7`). Group/sum from
+     `allItems` (same value math as `valueBlock()` `app.js:347-363`, grouped by
+     category instead of decision).
+  2. **Room cards** (list/grid): one per Location, each showing item count, total
+     value, decided/total progress + a small progress bar (reuse `locationBlock()`
+     math), and a short top-categories summary for that room
+     (e.g. "8 chairs · 3 electronics · 2 tables").
+- Tapping a room card sets the location filter and switches to the existing grid,
+  scoped to that room.
 - Add a "← All rooms" affordance to return to the picker. Keep the existing
   all-items + search experience available as a secondary toggle (don't remove it).
 - State is client-side only (which room is selected) — no schema or server change.
   Consider remembering the last room in `sessionStorage` for convenience.
+
+**Implementation hint:** a single helper that reduces `allItems` into
+`{ byLocation: {loc: {count, value, decided, total, byCategory}}, totals: {count,
+value, byCategory} }` feeds both the summary strip and the room cards in one pass.
 
 **Notes:** No data/auth/schema change. Mostly a routing/view-state addition on top of
 filters that already exist.
@@ -109,6 +124,7 @@ for the writes to work. Consider light validation (value/qty numeric) server-sid
 
 ## Suggested build order
 1. **Photo tap-to-zoom** — fastest win, pure front-end, immediately useful on phones.
-2. **Room-first review flow** — front-end, biggest workflow improvement for triage day.
+2. **Room-first overview + review flow** — front-end, biggest workflow improvement for
+   triage day (room picker + inventory/category summaries).
 3. **Notes + inline edit** — last, since it's the only one needing an Apps Script
    re-deploy and a new server write path.

@@ -7,7 +7,8 @@
 
 ## Next (queue)
 > Implementation-ready specs for the next UI features (photo tap-to-zoom, room-first
-> flow, notes + inline edit) live in `feature-specs.md`.
+> overview + flow w/ inventory & category summaries, notes + inline edit) live in
+> `feature-specs.md`.
 
 2. **Location-first "pick a room" review flow** — replace the all-items grid as the
    default with a room picker: reviewer lands on a list of locations (with per-room
