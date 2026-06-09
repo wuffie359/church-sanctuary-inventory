@@ -26,7 +26,7 @@ account throughout. Public repo, private data (Google Sign-In + Staff allowlist)
   photo folder with them.
 
 ## Acceptance criteria
-- [ ] Unauthenticated visitor to springclean.mistoba.org sees only the sign-in gate.
+- [ ] Unauthenticated visitor to springclean.mishtoba.com sees only the sign-in gate.
 - [ ] Allowlisted staff member signs in and sees catalogued items with photos.
 - [ ] Non-allowlisted Google user is rejected with a clear message.
 - [ ] `/inventory-process` turns new Drive photos into accurate Sheet rows (item,

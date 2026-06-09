@@ -20,7 +20,7 @@
 ## Decisions & Context
 - 2026-06-08: Chose Drive-folder pipeline, interactive web app w/ Apps Script
   write-back, full cloud now, Google Sign-In + Staff allowlist.
-- 2026-06-08: Custom domain springclean.mistoba.org (Chad owns mistoba.org) via CNAME.
+- 2026-06-08: Custom domain springclean.mishtoba.com (Chad owns mishtoba.com) via CNAME.
 - 2026-06-08: All artifacts confirmed under one owner Google account (unified identity).
 - Repo is PUBLIC (free Pages); data protected by sign-in + allowlist, not by privacy
   of the repo. Acceptable for non-sensitive asset photos; home test data gets flushed.

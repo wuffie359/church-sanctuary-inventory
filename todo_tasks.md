@@ -8,7 +8,7 @@
 ## Up Next
 - [ ] Chad: upload a few home test photos to the Drive folder
 - [ ] Run `/inventory-process` on the test photos — verify Sheet rows are accurate
-- [ ] Open springclean.mistoba.org → sign in → confirm items + photos render
+- [ ] Open springclean.mishtoba.com → sign in → confirm items + photos render
 - [ ] Tap Keep/Donate/Throw Away → refresh → confirm decisions persisted
 - [ ] Confirm a non-allowlisted Google account is blocked
 - [ ] Run `/inventory-flush` to reset after the test
@@ -19,7 +19,7 @@
 - [x] Built web app (index.html, app.js, config.js, styles.css) w/ Google Sign-In gate — 2026-06-08
 - [x] Wrote Apps Script bridge (token verify + allowlist + read/write) — 2026-06-08
 - [x] Wrote 3 skills: /inventory-process, /inventory-flush, /inventory-status — 2026-06-08
-- [x] Added CNAME (springclean.mistoba.org) + .gitignore — 2026-06-08
+- [x] Added CNAME (springclean.mishtoba.com) + .gitignore — 2026-06-08
 - [x] Created public GitHub repo + pushed + enabled Pages — 2026-06-08
 
 ## Session Log

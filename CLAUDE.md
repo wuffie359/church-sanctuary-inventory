@@ -15,7 +15,7 @@ web app hosted on GitHub Pages.
   Web App. Verifies a Google ID token + Reviewers allowlist on every read/write, and
   computes each item's resolved decision from the votes.
 - **Web app:** static site at repo root (`index.html`, `app.js`, `config.js`,
-  `styles.css`) → GitHub Pages → custom domain **springclean.mistoba.org**. Two views:
+  `styles.css`) → GitHub Pages → custom domain **springclean.mishtoba.com**. Two views:
   **Review** (vote per item) and **Dashboard** (progress, by-location, value, action lists).
 - **Skills:** `/inventory-process` (catalog), `/inventory-flush` (reset),
   `/inventory-status` (snapshot).
@@ -60,7 +60,7 @@ These three Google/DNS steps can't be automated. Do them once and the app is liv
 3. **APIs & Services → Credentials → Create Credentials → OAuth client ID** →
    Application type **Web application**.
 4. Under **Authorized JavaScript origins**, add BOTH:
-   - `https://springclean.mistoba.org`
+   - `https://springclean.mishtoba.com`
    - `https://wuffie359.github.io`
 5. Create → copy the **Client ID** (ends in `.apps.googleusercontent.com`).
 6. Paste it into **`config.js`** (`GOOGLE_CLIENT_ID`) **and** into **`apps-script/Code.gs`**
@@ -74,18 +74,18 @@ These three Google/DNS steps can't be automated. Do them once and the app is liv
 4. Authorize when prompted (review the Google consent screen — it's your own script).
 5. Copy the **Web app URL** (`.../exec`) → paste into `config.js` (`APPS_SCRIPT_URL`).
 
-### 3. Custom domain DNS (springclean.mistoba.org)
-1. At your DNS host for **mistoba.org**, add a **CNAME** record:
+### 3. Custom domain DNS (springclean.mishtoba.com)
+1. At your DNS host for **mishtoba.com**, add a **CNAME** record:
    - Host/Name: `springclean`
    - Value/Target: `wuffie359.github.io`
    - (TTL default is fine.)
-2. The repo already contains a `CNAME` file with `springclean.mistoba.org`, so GitHub
+2. The repo already contains a `CNAME` file with `springclean.mishtoba.com`, so GitHub
    Pages will pick it up. In the repo **Settings → Pages**, confirm the custom domain
-   shows `springclean.mistoba.org` and enable **Enforce HTTPS** once the cert issues
+   shows `springclean.mishtoba.com` and enable **Enforce HTTPS** once the cert issues
    (can take a few minutes to ~1 hour after DNS propagates).
 
 After all three: commit the updated `config.js`, push, and the live app is at
-**https://springclean.mistoba.org**.
+**https://springclean.mishtoba.com**.
 
 ---
 
