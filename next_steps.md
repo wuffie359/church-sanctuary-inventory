@@ -6,11 +6,15 @@
    write-back), then flush. Done = Chad has seen it work end-to-end.
 
 ## Next (queue)
+> Implementation-ready specs for the next UI features (photo tap-to-zoom, room-first
+> flow, notes + inline edit) live in `feature-specs.md`.
+
 2. **Location-first "pick a room" review flow** — replace the all-items grid as the
    default with a room picker: reviewer lands on a list of locations (with per-room
    progress), taps one, and reviews ONLY that room's items on its own page. Makes it
    easy to say "I'm working the Choir Room today" instead of scrolling everything.
    Keep the all-items/search view available as a secondary option. (Chad's idea, 2026-06-08.)
+   See `feature-specs.md` for the implementation-ready spec (front-end only).
 3. **Real sanctuary inventory, room by room** — photograph by location (sub-folders),
    process in batches, staff triage. Add staff to allowlist + share photo folder.
 3. **Decision export / report** — a "what we're donating / tossing" summary view or
