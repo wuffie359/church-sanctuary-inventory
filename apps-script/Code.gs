@@ -21,7 +21,7 @@
  */
 
 // Paste the SAME OAuth Web Client ID used in web/config.js:
-var CLIENT_ID = "PASTE_GOOGLE_CLIENT_ID_HERE";
+var CLIENT_ID = "497949053919-gno0qrkdbvbva2c8vmu5s1v94v29t02c.apps.googleusercontent.com";
 
 var SHEET_ID = "1azVxnJpIokdII_49P_teNQD_g1U_BKp2V4jLqhQ3eQQ";
 var INVENTORY_SHEET = "Inventory";

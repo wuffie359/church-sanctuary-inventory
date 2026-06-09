@@ -9,9 +9,9 @@
 window.SANCTUARY_CONFIG = {
   // Google OAuth 2.0 Web Client ID (Google Cloud Console → Credentials).
   // Looks like: 1234567890-abc123def456.apps.googleusercontent.com
-  GOOGLE_CLIENT_ID: "PASTE_GOOGLE_CLIENT_ID_HERE",
+  GOOGLE_CLIENT_ID: "497949053919-gno0qrkdbvbva2c8vmu5s1v94v29t02c.apps.googleusercontent.com",
 
   // Apps Script Web App URL (Apps Script editor → Deploy → Web app).
   // Looks like: https://script.google.com/macros/s/AKfyc.../exec
-  APPS_SCRIPT_URL: "PASTE_APPS_SCRIPT_URL_HERE",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwRQ2dd0A-J4vvC1nTTElOcWEkDfjdwsRdSI8FhFDiOcFXd56AMJV-JkcgNLuCjxWzjXQ/exec",
 };
