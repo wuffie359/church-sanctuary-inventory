@@ -13,7 +13,9 @@ Sheet (matched by Drive File ID) are skipped.
 - **Sheet ID:** `1azVxnJpIokdII_49P_teNQD_g1U_BKp2V4jLqhQ3eQQ`
 - **Inventory tab columns (A→R):** ID, Processed At, Location, Sub-Area, Item Name,
   Category, Description, Condition, Est. Value (USD), Qty, AI Suggested, AI Reasoning,
-  Photo File ID, Photo URL, Staff Decision, Decided By, Decided At, Staff Notes
+  Photo File ID, Photo URL, Resolved Decision, Status, Resolved At, Notes
+- **Columns O–R are filled by reviewer voting in the app — leave them blank here.**
+  New rows start with no votes, so the app shows them as "Undecided."
 
 ## Steps
 
@@ -53,7 +55,8 @@ Sheet (matched by Drive File ID) are skipped.
      not invent).
    - **Photo File ID** — the Drive file ID.
    - **Photo URL** — `https://drive.google.com/thumbnail?id=<FILE_ID>&sz=w600`
-   - Staff Decision / Decided By / Decided At / Staff Notes — leave blank.
+   - Resolved Decision / Status / Resolved At / Notes (cols O–R) — leave blank;
+     these are set when reviewers vote in the app.
 
 5. **Write rows.** Append via the Google Sheets connection (add_rows to the Inventory
    tab). Batch them in one call when possible.

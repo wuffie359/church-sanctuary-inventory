@@ -9,24 +9,39 @@ web app hosted on GitHub Pages.
 - **Photos:** Google Drive folder `Sanctuary Inventory Photos`
   (`1MhwuEVB3y_oGkA1WpT82g2TUSMvHk1OI`) — phone uploads here; sub-folders = Location.
 - **Database:** Google Sheet `Sanctuary Inventory`
-  (`1azVxnJpIokdII_49P_teNQD_g1U_BKp2V4jLqhQ3eQQ`) — `Inventory` tab + `Staff` allowlist tab.
+  (`1azVxnJpIokdII_49P_teNQD_g1U_BKp2V4jLqhQ3eQQ`) — `Inventory` tab + `Reviewers`
+  allowlist tab + `Votes` tab (one row per reviewer-per-item).
 - **Bridge:** Apps Script (`apps-script/Code.gs`) bound to the Sheet, deployed as a
-  Web App. Verifies a Google ID token + Staff allowlist on every read/write.
+  Web App. Verifies a Google ID token + Reviewers allowlist on every read/write, and
+  computes each item's resolved decision from the votes.
 - **Web app:** static site at repo root (`index.html`, `app.js`, `config.js`,
-  `styles.css`) → GitHub Pages → custom domain **springclean.mistoba.org**.
+  `styles.css`) → GitHub Pages → custom domain **springclean.mistoba.org**. Two views:
+  **Review** (vote per item) and **Dashboard** (progress, by-location, value, action lists).
 - **Skills:** `/inventory-process` (catalog), `/inventory-flush` (reset),
   `/inventory-status` (snapshot).
 
+## Voting model (role override)
+Reviewers vote Keep / Donate / Throw Away per item. **Staff/Admin votes are
+authoritative; Volunteer votes are recommendations.** Resolution per item:
+no votes → Undecided · volunteers only → Proposed (pending staff) · any staff & staff
+agree → Confirmed · staff disagree → Needs Resolution, **defaults to Keep** (flagged).
+The resolved decision + status are written back to Inventory cols O–R. If you ever
+edit `Code.gs`, you MUST re-deploy: Deploy → Manage deployments → ✏️ edit → New version
+→ Deploy (keeps the same `/exec` URL, so `config.js` is unchanged).
+
 ## Identity (all one account)
-Everything lives under **one owner Google account** (the account on the `Staff` tab
-marked Admin): the Drive folder, the Sheet, and the Apps Script. Photos render in the app via Drive thumbnail links that work for any
-signed-in user who has view access to the photo folder (the owner always does; share
-the folder with other staff before they use it).
+Everything lives under **one owner Google account** (the account on the `Reviewers`
+tab marked Admin): the Drive folder, the Sheet, and the Apps Script. Photos render in
+the app via Drive thumbnail links that work for any signed-in user who has view access
+to the photo folder (the owner always does; share the folder with other reviewers
+before they use it).
 
 ## Access control
 The repo is public (required for free GitHub Pages) but the **data is not**. The app
-shows nothing until a user signs in with Google AND their email is on the `Staff` tab.
-Manage access by editing the `Staff` tab — column A = email, B = name, C = role.
+shows nothing until a user signs in with Google AND their email is on the `Reviewers`
+tab. Manage access by editing the `Reviewers` tab — column A = email, B = name,
+C = role (**Admin**, **Staff**, or **Volunteer**). Role drives vote authority: Admin
+and Staff override Volunteers.
 
 ## Brand
 Navy `#1A3040`, Teal `#0088b8`, Montserrat. (FBC Huntersville standard.)

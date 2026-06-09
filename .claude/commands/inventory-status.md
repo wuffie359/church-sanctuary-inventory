@@ -15,12 +15,15 @@ Read-only. Summarizes the current state of the inventory for a fast check-in.
 2. Report:
    - **Total items** catalogued.
    - **By location** — count per Location.
-   - **Decision progress** — how many decided vs. needing a decision, and the
-     Keep / Donate / Throw Away split (staff decisions).
-   - **AI vs. staff** — where staff decisions differ from the AI suggestion (these are
-     the interesting overrides).
-   - **Estimated value** — sum of Est. Value for items marked Keep, and for Donate.
-   - **Data gaps** — rows missing a photo, missing a location, or flagged
-     "Unidentified — needs review".
-3. Also read `Staff!A2:C` and report who is on the allowlist.
+   - **Resolution progress** — counts by Status column: Confirmed / Needs Resolution /
+     Proposed (pending staff) / Undecided. "Staff-decided" = Confirmed + Needs Resolution.
+   - **Disposition split** — Keep / Donate / Throw Away counts from Resolved Decision.
+   - **Needs attention** — items with Status "Needs Resolution" (staff split) or
+     "Proposed" (volunteer vote awaiting staff), plus any "Unidentified" items.
+   - **AI vs. resolved** — where the Resolved Decision differs from AI Suggested.
+   - **Estimated value** — sum of Est. Value × Qty for Resolved Decision = Keep, and for Donate.
+   - **Data gaps** — rows missing a photo, missing a location, or "Unidentified".
+3. Read `Reviewers!A2:C` and report who is on the roster with their role (Admin /
+   Staff / Volunteer). Optionally read `Votes!A2:D` to show how many votes each reviewer
+   has cast.
 4. Keep it tight — a scannable briefing, not a wall of text. Bold the headline numbers.

@@ -24,8 +24,11 @@
 
 ## Session Log
 ### 2026-06-08
-- Built the entire app end-to-end in one session. All cloud artifacts created under
-  one owner Google account. Repo pushed, Pages enabled, custom domain set.
-- BLOCKED ON CHAD: the 3 manual Google steps (can't be automated) before first sign-in.
-- Pick up at: walk Chad through OAuth + Apps Script deploy + DNS, then process home
-  test photos and verify the loop.
+- Built the entire app end-to-end. ✅ Step 1 OAuth + ✅ Step 2 Apps Script deployed &
+  verified. ⏳ Step 3 DNS CNAME added at GoDaddy — propagating (background poll running).
+- Added v2: multi-reviewer voting (role override, staff>volunteer, split→Keep) +
+  Dashboard (progress, by-location, donation value, needs-attention, action lists).
+  Schema: Staff→Reviewers tab, new Votes tab, Inventory O–R repurposed. Visually verified.
+- BLOCKED ON CHAD (2 actions): (1) RE-DEPLOY the updated Code.gs (Manage deployments →
+  new version, same URL); (2) populate Reviewers tab with the 4 people + roles.
+- Pick up at: confirm DNS live + HTTPS, then redeploy + roster, then process test photos.

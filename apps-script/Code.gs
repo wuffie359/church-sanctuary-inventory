@@ -1,40 +1,38 @@
 /**
- * Sanctuary Inventory — Google Apps Script bridge
+ * Sanctuary Inventory — Google Apps Script bridge (v2: multi-reviewer voting)
  * ----------------------------------------------------------------------------
- * Sits between the public GitHub Pages site and the private Google Sheet.
- * Every request must carry a Google ID token from a signed-in user whose email
- * is on the Staff allowlist tab. Unauthenticated / un-allowlisted requests get
- * nothing. This is what makes the public app safe.
+ * Public GitHub Pages site ↔ private Google Sheet. Every request carries a
+ * Google ID token; only emails on the Reviewers tab get through.
  *
- * SETUP (one time):
- *   1. Open the Sanctuary Inventory Sheet → Extensions → Apps Script.
- *   2. Paste this whole file over the default Code.gs.
- *   3. Set CLIENT_ID below to your OAuth Web Client ID (same one in config.js).
- *   4. Deploy → New deployment → type "Web app".
- *        Execute as: Me.   Who has access: Anyone.
- *      ("Anyone" is fine — the token+allowlist check is the real gate.)
- *   5. Copy the /exec URL into web/config.js as APPS_SCRIPT_URL.
+ * Voting model (role override):
+ *   - Each reviewer votes Keep / Donate / Throw Away per item.
+ *   - Staff/Admin votes are authoritative; Volunteer votes are recommendations.
+ *   - Resolution per item:
+ *       no votes ............................ Undecided
+ *       volunteers only ..................... Proposed (pending staff)
+ *       any staff, staff agree .............. Confirmed
+ *       staff disagree ...................... Needs Resolution → defaults to Keep
+ *   - Resolved decision + status are written back to Inventory cols O–Q.
  *
- * No CORS preflight: the client uses GET for reads and POSTs JSON as
- * text/plain, so the browser never sends an OPTIONS request (which Apps
- * Script can't answer).
+ * RE-DEPLOY AFTER EDITING: Deploy → Manage deployments → ✏️ edit → Version:
+ * "New version" → Deploy. Keeps the SAME /exec URL (config.js unchanged).
  */
 
-// Paste the SAME OAuth Web Client ID used in web/config.js:
 var CLIENT_ID = "497949053919-gno0qrkdbvbva2c8vmu5s1v94v29t02c.apps.googleusercontent.com";
-
 var SHEET_ID = "1azVxnJpIokdII_49P_teNQD_g1U_BKp2V4jLqhQ3eQQ";
 var INVENTORY_SHEET = "Inventory";
-var STAFF_SHEET = "Staff";
+var REVIEWERS_SHEET = "Reviewers";
+var VOTES_SHEET = "Votes";
 
 // ── Entry points ────────────────────────────────────────────────────────────
 
 function doGet(e) {
   try {
-    var email = requireAllowlistedUser_(e.parameter.idToken);
-    var action = e.parameter.action || "list";
-    if (action === "list") return json_({ ok: true, items: listInventory_(), user: email });
-    return json_({ ok: false, error: "Unknown action: " + action });
+    var me = requireReviewer_(e.parameter.idToken);
+    if ((e.parameter.action || "list") === "list") {
+      return json_({ ok: true, me: me, items: listInventory_(), votes: listVotes_() });
+    }
+    return json_({ ok: false, error: "Unknown action." });
   } catch (err) {
     return json_({ ok: false, error: String(err.message || err) });
   }
@@ -43,21 +41,21 @@ function doGet(e) {
 function doPost(e) {
   try {
     var body = JSON.parse(e.postData.contents || "{}");
-    var email = requireAllowlistedUser_(body.idToken);
-    if (body.action === "decide") {
-      updateDecision_(body.id, body.decision, body.notes || "", email);
-      return json_({ ok: true });
+    var me = requireReviewer_(body.idToken);
+    if (body.action === "vote") {
+      var resolved = castVote_(body.id, me, body.vote || "");
+      return json_({ ok: true, id: body.id, resolved: resolved, votes: votesForItem_(body.id) });
     }
-    return json_({ ok: false, error: "Unknown action: " + body.action });
+    return json_({ ok: false, error: "Unknown action." });
   } catch (err) {
     return json_({ ok: false, error: String(err.message || err) });
   }
 }
 
-// ── Auth ─────────────────────────────────────────────────────────────────────
+// ── Auth + roles ──────────────────────────────────────────────────────────────
 
-/** Verifies a Google ID token and confirms the email is on the Staff tab. */
-function requireAllowlistedUser_(idToken) {
+/** Verifies the Google ID token and returns {email, role} from Reviewers. */
+function requireReviewer_(idToken) {
   if (!idToken) throw new Error("Not signed in.");
   var resp = UrlFetchApp.fetch(
     "https://oauth2.googleapis.com/tokeninfo?id_token=" + encodeURIComponent(idToken),
@@ -69,20 +67,30 @@ function requireAllowlistedUser_(idToken) {
   if (info.email_verified !== "true" && info.email_verified !== true)
     throw new Error("Email not verified.");
   var email = String(info.email || "").toLowerCase();
-  if (!isAllowlisted_(email)) throw new Error("Access denied: " + email + " is not on the staff list.");
-  return email;
+  var role = reviewerRole_(email);
+  if (!role) throw new Error("Access denied: " + email + " is not on the reviewer list.");
+  return { email: email, role: role };
 }
 
-function isAllowlisted_(email) {
-  var values = SpreadsheetApp.openById(SHEET_ID).getSheetByName(STAFF_SHEET)
-    .getRange("A2:A").getValues();
-  for (var i = 0; i < values.length; i++) {
-    if (String(values[i][0]).trim().toLowerCase() === email) return true;
+/** Returns the role for an email, or null if not a reviewer. */
+function reviewerRole_(email) {
+  var rows = SpreadsheetApp.openById(SHEET_ID).getSheetByName(REVIEWERS_SHEET)
+    .getRange("A2:C").getValues();
+  for (var i = 0; i < rows.length; i++) {
+    if (String(rows[i][0]).trim().toLowerCase() === email) {
+      var r = String(rows[i][2] || "Volunteer").trim();
+      return r || "Volunteer";
+    }
   }
-  return false;
+  return null;
 }
 
-// ── Data ─────────────────────────────────────────────────────────────────────
+function isStaffRole_(role) {
+  var r = String(role).toLowerCase();
+  return r === "staff" || r === "admin";
+}
+
+// ── Reads ─────────────────────────────────────────────────────────────────────
 
 function listInventory_() {
   var sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(INVENTORY_SHEET);
@@ -97,26 +105,91 @@ function listInventory_() {
     });
 }
 
-/** Writes a staff decision back to the row whose ID matches. */
-function updateDecision_(id, decision, notes, email) {
-  var valid = { "Keep": 1, "Donate": 1, "Throw Away": 1, "": 1 };
-  if (!(decision in valid)) throw new Error("Invalid decision: " + decision);
-  var sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(INVENTORY_SHEET);
-  var ids = sheet.getRange("A2:A").getValues();
-  for (var i = 0; i < ids.length; i++) {
-    if (String(ids[i][0]) === String(id)) {
-      var rowNum = i + 2; // O=15 Decision, P=16 By, Q=17 At, R=18 Notes
-      sheet.getRange(rowNum, 15).setValue(decision);
-      sheet.getRange(rowNum, 16).setValue(email);
-      sheet.getRange(rowNum, 17).setValue(new Date());
-      sheet.getRange(rowNum, 18).setValue(notes);
-      return;
-    }
-  }
-  throw new Error("Item not found: " + id);
+function listVotes_() {
+  var data = SpreadsheetApp.openById(SHEET_ID).getSheetByName(VOTES_SHEET)
+    .getRange("A2:D").getValues();
+  return data
+    .filter(function (r) { return r[0] !== "" && r[0] !== null; })
+    .map(function (r) { return { ItemID: String(r[0]), Email: String(r[1]), Role: String(r[2]), Vote: String(r[3]) }; });
 }
 
-// ── Util ─────────────────────────────────────────────────────────────────────
+function votesForItem_(id) {
+  return listVotes_().filter(function (v) { return v.ItemID === String(id); });
+}
+
+// ── Voting + resolution ───────────────────────────────────────────────────────
+
+/** Upserts the reviewer's vote (empty vote clears it), recomputes, persists. */
+function castVote_(id, me, vote) {
+  id = String(id);
+  var valid = { "Keep": 1, "Donate": 1, "Throw Away": 1, "": 1 };
+  if (!(vote in valid)) throw new Error("Invalid vote: " + vote);
+
+  var sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(VOTES_SHEET);
+  var rows = sheet.getRange("A2:E").getValues();
+  var foundRow = -1;
+  for (var i = 0; i < rows.length; i++) {
+    if (String(rows[i][0]) === id && String(rows[i][1]).toLowerCase() === me.email) { foundRow = i + 2; break; }
+  }
+  if (vote === "") {
+    if (foundRow > 0) sheet.deleteRow(foundRow);
+  } else if (foundRow > 0) {
+    sheet.getRange(foundRow, 3, 1, 3).setValues([[me.role, vote, new Date()]]);
+  } else {
+    sheet.appendRow([id, me.email, me.role, vote, new Date()]);
+  }
+  return resolveAndPersist_(id);
+}
+
+/** Computes the resolved decision for an item and writes it to Inventory O–Q. */
+function resolveAndPersist_(id) {
+  var votes = votesForItem_(id);
+  var resolved = resolve_(votes);
+
+  var inv = SpreadsheetApp.openById(SHEET_ID).getSheetByName(INVENTORY_SHEET);
+  var ids = inv.getRange("A2:A").getValues();
+  for (var i = 0; i < ids.length; i++) {
+    if (String(ids[i][0]) === id) {
+      var rowNum = i + 2; // O=15 decision, P=16 status, Q=17 resolved-at
+      inv.getRange(rowNum, 15).setValue(resolved.decision);
+      inv.getRange(rowNum, 16).setValue(resolved.status);
+      inv.getRange(rowNum, 17).setValue(resolved.decision || resolved.status === "Proposed" ? new Date() : "");
+      break;
+    }
+  }
+  return resolved;
+}
+
+/** Pure resolution logic shared in spirit with the client. */
+function resolve_(votes) {
+  var staff = votes.filter(function (v) { return isStaffRole_(v.Role); });
+  var vols = votes.filter(function (v) { return !isStaffRole_(v.Role); });
+
+  if (staff.length === 0) {
+    if (vols.length === 0) return { decision: "", status: "Undecided" };
+    var t = tally_(vols);
+    if (t.tie) return { decision: "", status: "Proposed" };
+    return { decision: t.top, status: "Proposed" };
+  }
+  var distinct = {};
+  staff.forEach(function (v) { distinct[v.Vote] = 1; });
+  var keys = Object.keys(distinct);
+  if (keys.length === 1) return { decision: keys[0], status: "Confirmed" };
+  return { decision: "Keep", status: "Needs Resolution" }; // staff split → default Keep
+}
+
+function tally_(votes) {
+  var c = { "Keep": 0, "Donate": 0, "Throw Away": 0 };
+  votes.forEach(function (v) { if (v.Vote in c) c[v.Vote]++; });
+  var top = "", max = -1, tie = false;
+  ["Keep", "Donate", "Throw Away"].forEach(function (k) {
+    if (c[k] > max) { max = c[k]; top = k; tie = false; }
+    else if (c[k] === max && max > 0) { tie = true; }
+  });
+  return { top: top, tie: tie };
+}
+
+// ── Util ──────────────────────────────────────────────────────────────────────
 
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj))

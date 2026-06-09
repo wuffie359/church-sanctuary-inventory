@@ -25,3 +25,11 @@
   position: absolute; inset: 0; display: grid; place-items: center;
   color: #94a3b8; font-size: 0.75rem; text-align: center; padding: 1rem;
 }
+
+/* Print: action lists only, clean paper output */
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
+  section { border: none !important; page-break-inside: avoid; }
+  .bg-white { box-shadow: none !important; }
+}
